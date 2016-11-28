@@ -17,6 +17,11 @@ namespace ASPSimple
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             ServerConfig.RegisterConfig("development");
+            DbConfig.Update();
+            if(DbConfig.DbEngine != DatabaseEngine.None)
+            {
+                DbConfig.CheckDbStructure();
+            }
         }
     }
 }

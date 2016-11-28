@@ -22,7 +22,11 @@
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
                     <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    @if (DbConfig.DbEngine != DatabaseEngine.None)
+                    {
+                    <li>@Html.ActionLink("View Data", "ViewDbData", "Home")</li>
+                    }
+                    <li><a href="#" onclick="doKill()">Kill an Instance</a></li>
                 </ul>
             </div>
         </div>
@@ -38,5 +42,13 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+    <script type="text/javascript">
+        function doKill() {
+            var req = new XMLHttpRequest();
+            req.open("POST", "@Url.Action("Kill","Home")", true);
+            req.send();
+            alert("Kill request sent");
+        }
+    </script>
 </body>
 </html>
