@@ -1,0 +1,165 @@
+= Lab 1 - Deploying a .NET Application
+
+[abstract]
+--
+In this lab we will push a .NET ASP.NET 4.5 application to Cloud Foundry.
+--
+
+= Lab - From Zero to Pushing Your First Application
+
+== Target
+
+. If you haven't already, download the latest release of the Cloud Foundry command line interface (CLI) from https://github.com/cloudfoundry/cli/releases for your operating system and install it.
+
+. Download and clone the git repo in Visual Studio, if you have the command line tool installed, or you can click 'Download ZIP' on the right side of the page https://github.com/Pivotal-Field-Engineering/pcf-dotnet-environment-viewer[here]
++
+----
+$ git clone https://github.com/Pivotal-Field-Engineering/pcf-dotnet-environment-viewer
+----
+
+. Set the API target for the CLI: (set appropriate end point for your environment)
++
+----
+$ cf api https://api.{CF_SYSTEM_DOMAIN} --skip-ssl-validation
+----
+
+. Login to Pivotal Cloudfoundry:
++
+----
+$ cf login
+----
++
+Follow the prompts.  You should have a welcome card with your username and password on it.  If you didn't get one, please ask.
+
+== Push It!
+
+. Change to the _ViewEnvironmentt_ application directory (this is the folder containing the code files and manifest.yml):
++
+----
+$ cd $ProjectHome/ViewEnvironment
+----
+
+. Push the application!
++
+----
+$ cf push
+----
++
+You should see output similar to the following listing. Take a look at the listing callouts for a play-by-play of what's happening:
++
+====
+----
+$ cf push
+Using manifest file manifest.yml
+
+Using stack windows2012R2...
+OK
+Updating app aspsimple in org instructor / space development as admin...
+OK
+
+Creating route aspsimple-interloan-impalement.{CF_APPS_DOMAIN}...
+OK
+
+Binding aspsimple-interloan-impalement.{CF_APPS_DOMAIN} to aspsimple...
+OK
+
+Uploading env...
+Uploading app files from: .
+Uploading 241.6K, 39 files
+Done uploading
+OK
+
+Stopping app aspsimple in org instructor / space development as admin...
+OK
+
+Starting app aspsimple in org instructor / space development as admin...
+Creating container
+Successfully created container
+Downloading app package...
+Downloaded app package (334K)
+Downloading buildpacks (binary_buildpack)...
+Downloading binary_buildpack...
+Downloaded binary_buildpack
+Downloaded buildpacks
+Staging...
+Exit status 0
+Staging complete
+Uploading droplet, build artifacts cache...
+Uploading droplet...
+Uploading build artifacts cache...
+Uploaded droplet (322.6K)
+Uploading complete
+
+0 of 1 instances running, 1 starting
+1 of 1 instances running
+
+App started
+
+
+OK
+
+App env was started using this command `..\tmp\lifecycle\WebAppServer.exe`
+
+Showing health and status for app aspsimple in org instructor / space development as admin...
+OK
+
+requested state: started
+instances: 1/1
+usage: 512M x 1 instances
+urls: aspsimple-unwrestled-grot.{CF_APPS_DOMAIN}
+last uploaded: Sat Oct 31 01:17:15 UTC 2015
+stack: windows2012R2
+
+     state     since                    cpu    memory           disk          details
+#0   running   2015-10-30 09:18:03 PM   0.0%   102.6M of 512M   14.8M of 1G
+
+$
+----
+<1> The CLI is using a manifest to provide necessary configuration details such as application name, memory to be allocated, the stack to be used (in this case Windows2012R2), the number of instances requested to start, and path to the application artifact.
+Take a look at `manifest.yml` to see how.
+<2> In most cases, the CLI indicates each Cloud Foundry API call as it happens.
+In this case, the CLI has created an application record for _aspsimple_ in your assigned space.
+<3> All HTTP/HTTPS requests to applications will flow through Cloud Foundry's front-end router called http://docs.cloudfoundry.org/concepts/architecture/router.html[(Go)Router].
+Here the CLI is creating a route with random word tokens inserted (again, see `manifest.yml` for a hint!) to prevent route collisions across the default `{CF_APPS_DOMAIN}` domain.
+<4> Now the CLI is _binding_ the created route to the application.
+Routes can actually be bound to multiple applications to support techniques such as http://www.mattstine.com/2013/07/10/blue-green-deployments-on-cloudfoundry[blue-green deployments].
+<5> The CLI finally uploads the application bits to Pivotal Cloud Foundry.
+<6> Now we begin the staging process. By choosing the Windows2012R2 stack a container is created on the runtime to prepare the application to run, a second container is then generated that will host your application...in this case using the WebAppServer process in Windows.  If you would continue on to the other language labs you can push an application on the Linux stack, this step gets replaced with the steps appropriate for the application being run.
+<7> The complete package of your application and all of its necessary runtime components is called a _droplet_.
+Here the droplet is being uploaded to Pivotal Cloud Foundry's internal blobstore so that it can be easily copied to one or more _http://docs.cloudfoundry.org/concepts/architecture/execution-agent.html[Cells]_ for execution.
+<8> The CLI tells you exactly what command and argument set was used to start your application.
+<9> Finally the CLI reports the current status of your application's health.
+====
+
+. Visit the application in your browser by hitting the route that was generated by the CLI:
++
+image::lab-net.png[]
+
+== Interact with App from CF CLI
+
+. Get information about the currently deployed application using CLI apps command:
++
+----
+$ cf apps
+----
++
+Note the application name for next steps
+
+. Get information about running instances, memory, CPU, and other statistics using CLI instances command
++
+----
+$ cf app env
+----
+
+. Stop the deployed application using the CLI
++
+----
+$ cf stop env
+----
+
+. Delete the deployed application using the CLI
++
+----
+$ cf delete env
+----
+
