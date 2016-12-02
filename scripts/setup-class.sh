@@ -1,4 +1,4 @@
-#!env bash
+#!/usr/local/bin/bash
 # 
 # This script requires bash 4! Upgrade!
 #
@@ -12,33 +12,37 @@
 # Before running this script make to set the default behavior of the foundation to be all_closed
 # in terms of security groups
 
-cf create-security-group development-security-group ./development-security-group.json
+#cf create-security-group development-security-group ./development-security-group.json
 
 declare -A orgs
 
-echo `date` > org_summary.txt
+echo "|===============================================
+|User Name                    |Password |Org" > org_summary.txt
 for email in `cat class-participant-emails.txt` ; do
-org=`echo $email | tr '_.' "\n" | egrep -v com | colrm 2 | tr -d "\n" && echo -org`
+  org=`echo $email | tr '_.' "\n" | egrep -v com | colrm 2 | tr -d "\n" && echo -org`
+  
+  if [[ ${orgs[$org]} -eq 1 ]]; then 
+  org=$org"1"
+  fi
+  orgs[$org]=1
+  
+  #org=`echo $email | sed 's/\([^@]*\).*/\1-org/'`
+  echo "INFO: Setting up $org: for $email"
+ 
+  cf create-org $org
+  cf create-space development -o $org
+  #cf create-space production -o $org
+  
+  cf create-user $email password
+  cf set-org-role admin $org OrgManager
+  cf set-org-role $email $org OrgManager
+  cf set-space-role $email $org development SpaceManager
+  cf set-space-role $email $org development SpaceDeveloper
+  #cf set-space-role $email $org production SpaceManager
+  #cf set-space-role $email $org production SpaceDeveloper
+  #cf bind-security-group all_open $org production
 
-if [[ ${orgs[$org]} -eq 1 ]]; then 
-org=$org"1"
-fi
-orgs[$org]=1
-
-org=`echo $email | sed 's/\([^@]*\).*/\1-org/'`
-echo "INFO: Setting up $org: for $email"
-
-cf create-org $org
-cf create-space development -o $org
-cf create-space production -o $org
-
-cf create-user $email password
-cf set-org-role admin $org OrgManager
-cf set-org-role $email $org OrgManager
-cf set-space-role $email $org development SpaceManager
-cf set-space-role $email $org development SpaceDeveloper
-cf set-space-role $email $org production SpaceManager
-cf set-space-role $email $org production SpaceDeveloper
-cf bind-security-group all_open $org production
-
+  echo "|$email |password |$org" >> org_summary.txt
 done
+
+echo "|===============================================" >> org_summary.txt

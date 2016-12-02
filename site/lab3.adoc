@@ -1,0 +1,55 @@
+= Lab 3 - Scaling your .NET 4.5 Application
+
+== Assumptions
+
+. This lab assumes you have completed Lab 2, and bound a MS SQL Database to your application.  If you haven't done that, please go back to Lab 2 and complete that first.
+
+== Scale it up!
+
+. Let's scale our application up!  We'll use the `cf scale` command to do that.  First, let's look at what we can scale.
++
+----
+c:\ASPSimple\ASPSimple\bin\published>cf help scale
+----
++ 
+Notice the ephemeral disk, memory, and number of instances of the app are all scaleable items.
+
+. Now, let's vertically scale by adding some memory to our app.
++
+----
+c:\ASPSimple\ASPSimple\bin\published>cf scale aspsimple -m 512m
+----
++
+Adding memory, as you can see, requires the app to be restarted.
+
+. Load your application's front page in the browser, and look in the "VCAP_APPLICATION Data" section.  Notice that the `vcap:application:limits:mem` value has been raised to 512.  If the app tries to exceed this amount of memory, then it will be forcibly stopped by the platform.  This helps ensure that one app can't try to starve all the other apps for memory by overallocating.  
+
+. Let's set memory back to 384m for now.
++
+----
+c:\ASPSimple\ASPSimple\bin\published>cf scale aspsimple -m 384m
+----
+
+. Now, let's horizontally scale the app by adding more instances.
++
+----
+c:\ASPSimple\ASPSimple\bin\published>cf scale aspsimple -i 2
+----
++
+Notice that this operation was much faster.  That's because is is easy for the platform to simply spin up more containers with your app in them.  As we saw in previous labs, Pivotal CF saves your staged app as a "droplet" and uses that image everytime it needs to schedule a container to run your app.
+
+== Check multiple instances
+
+. You can check to make sure that multiple instances of your app are running from the command line with the `cf app` command.
++
+----
+c:\ASPSimple\ASPSimple\bin\published>cf app aspsimple
+----
++
+You should see that both instances of your app are running, or perhaps 1 is running, and 1 is starting.  Keep checking until the second instance is in a running status.
+
+. You can also see the status of applications from the Pivotal CF Apps Manager console.  Navigate to https://apps.{system-domain}, and login with the user name and password that you used to login to the CLI.  You can click on the "development" space on the left hand side of the browser, and then click on the name of your application (aspsimple) to view the detail status of the application instances.
+
+. Let's check that your new app instance is being used.  Navigate to the front page of your app in the web browser again, and check out the top section of the page in the "CF Environment Variables section".  In that section there a CF_INSTANCE_GUID, and CF_INSTANCE_INDEX value that are specific to particular instances of your application.  Since we have 2 instances running, you should see two instances of your app.  Try refreshing the page a few times to see if you can see the different values for your different instances.
+
+. Also, check the "View Data" link in the app and refresh the page a few times.  You should see that the data is the same across both app instances.

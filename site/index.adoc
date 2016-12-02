@@ -1,0 +1,24 @@
+= Pivotal CF Workshop
+
+== Student Set Up
+
+* Go to https://github.com/cloudfoundry/cli/releases/tag/v6.22.2 and download the appropriate installer for your machine.  If you can't install software on your machine, you can choose the "binary" download, extract the archive to your disk, and just call the command from where ever you extracted it to.
+* Check the list below for your user name (case sensitive, exactly as it is in the table), and password.  If you don't see your name in the following list, then let me know so I can add an account and org for you.
+[options="header"]
+|===============================================
+|User Name                    |Password |Org
+|===============================================
+* An IDE is not required for this workshop, but Visual Studio would be nice if you want to browse the project.
+
+== Rough Agenda
+
+* 9:00 am to 9:30 am - Pivotal CF Intro (preso)
+* 9:30 am to 10:30 am - Attendee <<lab1.adoc#,Lab 1>> - Pushing your first app to Pivotal CF
+* 10:30 am to 10:45 am - Break
+* 10:45 am to noon - Pivotal CF Architecture, Buildpacks, and Services
+* Noon to 1:00 pm - Lunch
+* 1:00 pm - 3:00 pm - Attendee Labs - Binding to Services, Scaling, and Monitoring (breaks as needed)
+** <<lab2.adoc,Lab 2>>
+** <<lab3.adoc,Lab 3>>
+** <<lab4.adoc,Lab 4>>
+* 3:00 pm - 4:00 pm - Open discussion and white-boarding
