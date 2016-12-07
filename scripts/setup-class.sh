@@ -1,4 +1,4 @@
-#!/usr/local/bin/bash
+#!/usr/bin/env bash
 # 
 # This script requires bash 4! Upgrade!
 #
@@ -16,9 +16,47 @@
 
 declare -A orgs
 
-echo "|===============================================
-|User Name                    |Password |Org" > org_summary.txt
-for email in `cat class-participant-emails.txt` ; do
+simulate=0
+create_prod=0
+summary_file=org_summary.txt
+email_file=class-participant-emails.txt
+
+function show_help {
+	cat <<EOD
+Usage: setup-class [OPTION..]
+
+  -h, -?   Show usage
+  -s       Simulate setting up the class, but don't create anything
+  -p       Create a production space for users and apply a "deny all" ASG to the development space
+  -o FILE  Set the file for the output summary.  Default is "org_summary.txt"
+  -e FILE  The file to read for email addresses.  Default is "class-participant-emails.txt
+
+EOD
+}
+
+while getopts "h?spoe" opt; do
+  case "$opt" in
+	h|\?)
+		show_help
+      		exit 0
+		;;
+	s) simulate=1
+	   ;;
+	p) create_prod=1
+     	   ;;
+	o) summary_file=$OPTARG
+	   ;;
+        e) email_file=$OPTARG
+           ;;
+  esac
+done  
+
+cat > $summary_file <<EOD
+|===============================================
+|User Name                    |Password |Org
+EOD
+
+for email in `cat $email_file` ; do
   org=`echo $email | tr '_.' "\n" | egrep -v com | colrm 2 | tr -d "\n" && echo -org`
   
   if [[ ${orgs[$org]} -eq 1 ]]; then 
@@ -26,23 +64,24 @@ for email in `cat class-participant-emails.txt` ; do
   fi
   orgs[$org]=1
   
-  #org=`echo $email | sed 's/\([^@]*\).*/\1-org/'`
   echo "INFO: Setting up $org: for $email"
- 
-  cf create-org $org
-  cf create-space development -o $org
-  #cf create-space production -o $org
-  
-  cf create-user $email password
-  cf set-org-role admin $org OrgManager
-  cf set-org-role $email $org OrgManager
-  cf set-space-role $email $org development SpaceManager
-  cf set-space-role $email $org development SpaceDeveloper
-  #cf set-space-role $email $org production SpaceManager
-  #cf set-space-role $email $org production SpaceDeveloper
-  #cf bind-security-group all_open $org production
 
-  echo "|$email |password |$org" >> org_summary.txt
+  if [ "$simulate" -eq "0" ]
+  then
+    cf create-org $org
+    cf create-space development -o $org
+    if [ "$create_prod" -eq "1" ]; then cf create-space production -o $org; fi
+  
+    cf create-user $email password
+    cf set-org-role admin $org OrgManager
+    cf set-org-role $email $org OrgManager
+    cf set-space-role $email $org development SpaceManager
+    cf set-space-role $email $org development SpaceDeveloper
+    if [ "$create_prod" -eq "1" ]; then cf set-space-role $email $org production SpaceManager; fi
+    if [ "$create_prod" -eq "1" ]; then cf set-space-role $email $org production SpaceDeveloper; fi
+    if [ "$create_prod" -eq "1" ]; then cf bind-security-group all_open $org production; fi
+  fi
+  echo "|$email |password |$org" >> $summary_file
 done
 
-echo "|===============================================" >> org_summary.txt
+echo "|===============================================" >> $summary_file

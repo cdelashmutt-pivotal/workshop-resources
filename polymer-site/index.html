@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+	<title>codelab demo</title>
+	<script src="bower_components/webcomponentsjs/webcomponents-lite.min.js" async></script>
+	<script>
+		window.Polymer = {
+			dom: 'shadow',
+			lazyRegister: 'max',
+			useNativeCSSProperties: true
+		};
+	</script>
+	<link rel="stylesheet"
+	href="//fonts.googleapis.com/css?family=Roboto:300,400,400italic,500,500italic,700,700italic|Roboto+Mono:400,700">
+	<link rel="import" href="bower_components/codelab-components/google-codelab-elements.html">
+	<style is="custom-style">
+		body {
+			font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial;
+			background: var(--google-codelab-background, --paper-grey-300);
+		}
+		:root {
+			--google-codelab-header-background: var(--paper-teal-600);
+		};
+	</style>
+</head>
+<body>
+
+	<google-codelab title="Lab 1"
+	feedback-link="https://github.com/googlecodelabs"
+	environment="web"
+	last-updated="2016-07-18">
+
+	<google-codelab-step label="Overview" duration="2">
+
+		<p><img src="img-1.png" style="max-width: 624px"></p><p>In this codelab, You'll create a fully working Google Maps app using elements in Polymer's <a href="https://elements.polymer-project.org/browse?package=google-web-components">Google Web Components</a>&#160;collection. The app will be responsive, include driving directions, and transit a mode. Along the way, you'll also learn about Polymer's data-binding features and <a href="https://elements.polymer-project.org/browse?package=iron-elements">iron element</a>&#160;set.</p>
+		<h3 class="checklist">What you'll learn</h3>
+		<ul class="checklist">
+			<li>How to start a new Polymer-based project using Chrome Dev Editor</li>
+			<li>How to use elements in Polymer's iron, paper, and Google Web Component sets.</li>
+			<li>How to use Polymer's data binding features to reduce boilerplate code.</li>
+		</ul>
+		<h3>What you'll need</h3>
+		<ul>
+			<li>Basic understanding of HTML, CSS, and web development.</li>
+			<li>Install <a href="https://chrome.google.com/webstore/detail/chrome-dev-editor-develop/pnoffddplpippgcfjdhbmhkofpnaalpg?hl=en">Chrome Dev Editor</a>&#160;or use your own editor of choice.</li>
+		</ul>
+		<google-codelab-survey survey-id="test-survey-123"><h4>How&#160;would rate your experience with Polymer?</h4>
+			<paper-radio-group><paper-radio-button>Novice</paper-radio-button><paper-radio-button>Intermediate</paper-radio-button><paper-radio-button>Advanced</paper-radio-button></paper-radio-group></google-codelab-survey>
+
+		</google-codelab-step>
+	</google-codelab>
+</body>
+</html>

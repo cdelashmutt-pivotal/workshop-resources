@@ -1,0 +1,7 @@
+{
+  "name": "polymer-site",
+  "short_name": "polymer-site",
+  "description": "Test",
+  "start_url": "/",
+  "display": "standalone"
+}
